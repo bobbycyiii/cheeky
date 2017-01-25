@@ -1,0 +1,200 @@
+\documentclass{amsart}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%version 3 of paper
+
+\usepackage{amscd}
+\usepackage{amsmath, calculation}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{subfig}
+\usepackage{graphicx}
+%\usepackage{geometry}
+%\usepackage[all,cmtip]{xy}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+%\setlength{\textheight}{9.8in} \setlength{\topmargin}{0.0in}
+%\setlength{\headheight}{0.0in} \setlength{\headsep}{0.0in}
+%\setlength{\leftmargin}{0.5in}\setlength{\oddsidemargin}{0.0in}
+%\setlength{\parindent}{0pc}\linespread{1.6}
+%\setlength{\textwidth}{6in}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{alem}[thm]{Almost A Lemma}
+\newtheorem{lts}[thm]{Left to Show}
+\newtheorem*{dfn}{Definition}
+\newtheorem*{conj}{Conjecture}
+
+
+
+\newenvironment{poc}[1][Proof of Claim]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\GL}{\Gamma_L}
+\newcommand{\GLone}{\Gamma_{L'}}
+\newcommand{\Gnot}{\Gamma_0}
+\newcommand{\GK}{\Gamma_K}
+%\newcommand{\GDS}{\Gamma_{D_s}}
+%\newcommand{\GDF}{\Gamma_{D_f}}
+\newcommand{\GDS}{\Gamma_{s}}
+\newcommand{\GDF}{\Gamma_{f}}
+
+
+\newcommand{\NGL}{N(\Gamma_L)}
+\newcommand{\SNL}{\Sth - L}
+\newcommand{\CGL}{Comm^+(\Gamma_L)}
+\newcommand{\Hth}{\mathbb{H}^3}
+\newcommand{\PSLTC}{PSL(2, \mathbb{C})}
+\newcommand{\PSLTF}{PSL(2, \mathbb{F})}
+\newcommand{\PSLTZI}{PSL(2, \mathbb{Z}[i])}
+\newcommand{\SLTC}{SL(2, \mathbb{C})}
+\newcommand{\TT}{\mathcal{T}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZnZ}{\mathbb{Z}/n\mathbb{Z}}
+\newcommand{\ZthZ}{\mathbb{Z}/2\mathbb{Z}}
+\newcommand{\ZFZ}{\mathbb{Z}/4\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qy}{\mathbb{Q}(y)}
+
+
+\newcommand{\TtwoxI}{\mathbb{T}^2 \times I}
+\newcommand{\PxS}{\mathbb{P} \times \mathbb{S}^1}
+\newcommand{\RPth}{RP^3}
+\newcommand{\Sth}{S^3}
+\newcommand{\SxD}{\mathbb{S}^1 \times D}
+\newcommand{\SxStwo}{\mathbb{S}^1 \times S^2}
+
+
+\begin{document}
+\title{Maximal injectivity radius of an ideal tetrahedron}
+\author{G\"{o}rner, Haraway, Hoffman, Trnkova}
+\date{\today}
+\maketitle
+
+
+We work primarily in the Beltrami-Klein model. However,
+since SnapPy parametrizes the isometry class of an
+ideal tetrahedron by elements of the upper half-plane,
+we need to calculate a map from $\mathbf{C}$ to
+the sphere which takes circles to circles. The following
+is the usual stereographic projection $\phi$ to the unit sphere
+from $(0,0,1)^t$:
+\[
+\phi = a+b\cdot i \mapsto
+\begin{pmatrix}
+2\cdot a / s\\
+2\cdot b / s\\
+(s-2)/s
+\end{pmatrix},
+\]
+where $s = a^2 + b^2 + 1$.
+We note that $\phi.(0) = (0,0,-1)^t$,
+$\phi.(1) = (1,0,0)^t$, $\phi.(-1) = (-1,0,0)^t$,
+$\phi.(i) = (0,1,0)^t$, and $\phi.(-i) = (0,-1,0)^t$.
+Thus the involutions $w\mapsto -1/w$, $w\mapsto -w$, 
+and $w \mapsto 1/w$ push forward through $\phi$
+to the involutions changing the sign of two coordinates.
+
+We can make these involutions be the half-revolutions
+around the perpendiculars through opposite edges in our
+tetrahedron by applying an isometry, the image
+of $z$ under which is $\sqrt{(2-z-2\cdot\sqrt{1-z})/z}$.
+(We can check this using a computer algebra system.)
+Let $a+b\cdot i = \sqrt{(2-z-2\cdot\sqrt{1-z})/z}$.
+
+Let us write $\phi.(a+b\cdot i) = (C,D,E)^t$ and
+call it $w$. The image of $w$ under the involutions
+are the other vertices of the tetrahedron, viz.
+$(C,-D,-E)^t$, $(-C,D,-E)^t$, and $(-C,-D,E)^t$.
+The triangle these three form is the 
+side $S$ of the tetrahedron opposite $w$.
+The image of our original tetrahedron is the convex
+hull of these four points on the unit sphere.
+
+We first would like to show that the point of
+maximum injectivity radius is, indeed, the center
+of the Beltrami-Klein model, the origin $O = (0,0,0)^t$.
+The involutions have $(0,0,0)^t$ as their unique
+common fixed point. For the action of the Klein four-group
+they generate, we can take as fundamental domain the
+cone $C$ from $S$ to $O$. Now, $C$ is precisely those
+points in the tetrahedron closest to $S$. So it will
+suffice to calculate the point(s) in $C$ with maximum
+distance from $S$. Now the locus of points distance less than
+$r$ to $S$ is a strictly convex, round domain $D_r$.
+Let $R$ be the distance from $O$ to $S$. Consider
+that the closure of $D_R$ contains $O$ and the vertices
+of $S$. By roundness and strict convexity, $\overline{D_R} \cap C$
+is just the vertices of $C$. In particular, the only point
+of $C$ on the boundary of $\overline{D_R}$ is $O$, which
+therefore is the only point distance exactly $R$ from $S$,
+and all other points in $C$ have distance less than $R$.
+Thus, $O$ is the unique point in $C$ of maximal injectivity
+radius. By symmetry, $O$ is the unique point in the
+tetrahedron of maximal injectivity radius.
+
+Having found a (unique) point of maximum injectivity
+radius, we now calculate this radius. First,
+note that the perpendicular from $O$ to a plane
+in the Beltrami-Klein model is, in fact, a
+Euclidean perpendicular in the (incomplete) metric the ball
+inherits from Euclidean space. Furthermore,
+suppose that the Euclidean distance from $O$ to
+the plane is $p$. Then the hyperbolic distance
+from $O$ to the plane is $(1/2) \cdot \log (\frac{1+p}{1-p})$.
+But the derivative of this expression with respect
+to $p$ is $1/(1-p^2)$, which is greater than 1 for $0<p<1$.
+So $p$ is less than this expression. In fact, $p$
+is the first Taylor approximation of this expression
+near $p=0$. So just calculating the Euclidean distance
+from $O$ to the plane is a good enough approximation for us.
+But if one so desires, it is simple to calculate
+the true injectivity radius by the above expression.
+
+The calculation goes as follows. We can express
+the plane supporting $S$ as $\eta^{-1}.(-C\cdot D \cdot E)$
+where $\eta$ is the linear functional $(D\cdot E,\ C\cdot E,\ C\cdot D)$.
+The unit normal to this plane, therefore, is
+$\hat{\xi} = (1/k) \cdot \eta^t$, where
+$k = \|\eta\|$.
+The line through $\hat{\xi}$ and $O$ is
+the perpendicular from $O$ to the plane.
+It intersects the plane at $(-C\cdot D\cdot E / k) \cdot \hat{\xi}$,
+whose norm is, plainly, $|C \cdot D \cdot E| / k$. This norm
+is the desired Euclidean distance. We now calculate.
+\begin{calculation}[=]
+p
+\step{above discussion}
+|C \cdot D \cdot E| / k
+\step{definition of $k$}
+|C \cdot D \cdot E| / \sqrt{D^2\cdot E^2+C^2\cdot E^2+C^2\cdot D^2}
+\step{definition of $C$, $D$, and $E$; algebra}
+|2\cdot a \cdot 2 \cdot b \cdot (s-2) / s^3|
+/ \sqrt{(4\cdot b^2 \cdot (s-2)^2 + 4 \cdot a^2 \cdot (s-2)^2 + 16 \cdot a^2 \cdot b^2)/s^4}
+\step{algebra}
+4\cdot s^2 \cdot |a\cdot b \cdot (s-2)|
+/ \left ( s^3 \cdot \sqrt{4 \cdot (b^2 \cdot (s-2)^2 + a^2 \cdot (s-2)^2 + 4 \cdot a^2 \cdot b^2)}\right )
+\step{algebra}
+2\cdot |a\cdot b \cdot (s-2)|
+/ \left ( s \cdot \sqrt{b^2 \cdot (s-2)^2 + a^2 \cdot (s-2)^2 + 4 \cdot a^2 \cdot b^2} \right )
+\step{algebra}
+2\cdot |a\cdot b \cdot (s-2)|
+/ \left ( s \cdot \sqrt{(a^2 + b^2) \cdot (s-2)^2 + 4 \cdot a^2 \cdot b^2} \right )
+\step{definition of $s$}
+2\cdot |a\cdot b \cdot (a^2+b^2 - 1)|
+/ \left ( (a^2+b^2+1) \cdot \sqrt{(a^2 + b^2) \cdot (a^2+b^2-1)^2 + 4 \cdot a^2 \cdot b^2} \right )
+\end{calculation}
+
+\end{document}
