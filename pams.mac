@@ -3,7 +3,7 @@
    $g_L$ as gL.
 */
 
-S: (1.0/(2.0*sqrt(2.0))) / (asinh(1.0/(2.0*sqrt(2.0))));    K: 2.0*sqrt(3.0)/S;
+S: (1/(2*sqrt(2))) / (asinh(1/(2*sqrt(2))));    K: 2*sqrt(3)/S;
 
 h: (1+z^2) / (z*(1-z^2));   gU: (1+z^2) / (2*z^3);    gL: (1+z^2)^2 / (2*z^3*(3-z^2));
 
@@ -31,9 +31,13 @@ FU: factor(expand( (Hp/(H + GU)) - 1/(1-z) ));
    rigorous bounds, but only an approximation of the
    error in the given estimate. So this code will only
    strongly suggest the numbers given in the paper are
-   correct. We give a formal proof that the numbers are
-   correct using the Coq proof assistant in Dehn.v .
+   correct. We will give a formal proof that the numbers
+   are correct using the Coq proof assistant in Dehn.v .
+
+   The suggestion is strong because the functions are
+   extremely well-behaved on the given domain [1/sqrt(3),1].
 */
+
 FUw : subst(w,z,FU);
 PHU(z):= quad_qag(FUw, w, 1, z, 1)[1];
 
@@ -53,10 +57,87 @@ UBint: subst(w,z,factor(expand(Hp/(H*(H+GU)) )));
 
 UB(z):= (1/4)*quad_qag(UBint,w,z,1,1)[1];
 
-/* The find_root routine is also a numerical routine,
-   but yields rigorous estimates with little additional work.
+/* We chose this order of definition because it accords
+   with the paper's order; and the paper's order looks nice.
+   However, it doesn't make clear which of the above functions
+   are defined rigorously, and which are only estimated. The
+   functions which are defined rigorously are those which
+   are independent of numerical integration. Among these are
+   FU and FL. We note that since h, hp, gL, and gU differ by
+   the constant factor K from H, Hp, GL, and GU, we can redefine
+   FU and FL as follows. This manifests them as rational functions
+   over the rationals. So these are rigorous definitions.
 */
+
+FU: factor(expand( (hp/(h + gU)) - 1/(1-z) ));
+FL: factor(expand( (hp/(h - gL)) - 1/(1-z) ));
+
+/* We can make similar simplifications for the integrands
+   in Hodgson and Kerckhoff's main theorem. The integrand
+   of LB is K*hp/(h*(h-gL)); likewise, the integrand for
+   UB is K*hp/(h*(h+gU)). Dropping the K does not change
+   the sign of LB or UB, nor does it change which one is
+   bigger than the other.
+*/
+
+LBintNoK: subst(w,z,factor(expand(hp/(h*(h-gL)))));
+UBintNoK: subst(w,z,factor(expand(hp/(h*(h+gU)))));
+LBUBdiff: factor(expand(LBintNoK-UBintNoK));
+
+/* The following code is rigorous, but does not allow us to
+   reach the desired conclusion without rigorous bounds on xi,
+   which, later, we only approximate.
    
+   The routine real_roots is rigorous, using the method
+   of Sturm chains to isolate real roots of polynomials,
+   and then using the method of bisection to isolate the roots
+   to the desired precision. (See the Maxima Reference Manual,
+   section 20, on equations.) 
+
+   fu3fac is an expression with several factors. We use the
+   part function of Maxima to pick out the factor of interest to
+   us, namely the numerator, without the factor of 2. We do the
+   same for the other functions.
+*/
+
+fU3fac: factor(expand( (1-z)*(FU^2-derivative(FU,z)) + 2*FU ));
+
+fU3facRoots: realroots(part(fU3fac,1,1), 10^-6);
+
+fL3fac: factor(expand( (1-z)*(FL^2-derivative(FL,z)) + 2*FL ));
+
+fL3facRoots: realroots(part(fL3fac,1,1), 10^-6);
+
+tL: subst(z,w,LBintNoK);
+
+tLp: factor(expand(derivative(tL, z)));
+
+pL: part(tLp, 1, 1, 5);
+
+pLfacRoots: realroots(pL, 10^-6);
+
+tU: subst(z,w,UBintNoK);
+
+tUp: factor(expand(derivative(tU, z)));
+
+pU: part(tUp, 1, 1, 3);
+
+pUfacRoots: realroots(pU, 10^-6);
+
+/* The above code gets rigorous estimates on the roots of the
+   associated polynomials. However, without knowing rigorous
+   bounds on xi, we cannot say whether or not the roots lie
+   outside the given interval, as desired. This remains to be
+   done in Coq. What follows are non-rigorous but strongly
+   suggestive estimates that use non-rigorous numerical quadrature,
+   and the (also non-rigorous) find_root routine.
+
+   Crucially, we require that none of the roots of the above
+   polynomials lie in [xi,1]. This is barely true; one of the roots
+   of the polynomial used in getting nice bounds for fL is
+   approximately 0.805, whereas xi is approximately 0.811.
+*/
+
 deltaVUpperBound: LB(find_root(fL(x)-fU(sqrt(1/3)), x, sqrt(1/3),1));
 
 Theta:deltaVUpperBound;
@@ -67,22 +148,10 @@ zUlb: zULowerBound;
 
 lcLowerBound: sqrt(float((2*%pi)^2/fU(zUlb)));
 
-/* The following is the code one can use to verify that
-   the monotonicities given are correct. The routine
-   real_roots is rigorous, using the method
-   of Sturm chains to isolate roots, and then using
-   the method of bisection to isolate the roots
-   to the desired precision.
-*/
+xi: find_root(LB(x)-Theta, x, sqrt(1/3), 1);
 
-fU3fac: factor(expand( (1-z)*(FU^2-derivative(FU,z)) + 2*FU ));
+alpha: K*(1-xi)*exp(PHU(xi)-PHL(xi))/(2*%pi*Theta);
 
-realroots(part(fU3fac,1,1), 10^-6);
+beta: (2*%pi)^2*Theta*exp(PHL(xi))/(K*(1-xi));
 
-fL3fac: factor(expand( (1-z)*(FL^2-derivative(FL,z)) + 2*FL ));
-
-realroots(part(fL3fac,1,1), 10^-6);
-
-tL: factor(expand( hp/(h * (h - gL)) ));
-
-tU: factor(expand( hp/(h * (h + gU)) ));
+gamma: %pi^2*exp(PHU(xi));
